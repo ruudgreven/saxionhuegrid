@@ -13,25 +13,22 @@ var Grid = require('./models/grid');
 var Light = require('./models/light');
 
 global.hue = {
-  ip: "192.168.1.30",
-  user: "UUqwtAOyBrtQj2WmfG9tCn-6Nx2JCF24qke6q5Hp"
+  ip: "192.168.1.108",
+  user: "1UmgNAICof88T2HqtgZf6YRzpr2Sk6hXMNihixI2"
 }
 
 //Initialize grid with light id's
 var hue_ids = [
-  [12, 12, 12],
-  [12, 12, 12],
-  [12, 12, 12],
-  [12, 12, 12],
-  [12, 12, 12],
-  [12, -1, -1]
+  [1,  -1,  -1],
+  [3, 8, 2],
+  [7, 14, 15],
+  [4, 5, 13],
+  [11, 12, 10],
+  [16, 9, 6]
 ];
 
 //Create grid
 global.grid = new Grid(hue_ids);
-global.grid.setState(0,5,true);
-global.grid.setColorRGB(2,2,0,0,255);
-global.grid.saveInstant(2,2,10);
 
 var app = express();
 
@@ -67,5 +64,71 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.end(res.locals.message);
 });
+app.listen(8080, function(){
+  console.log("Start:\n" + "http://localhost/api/");
+  setGrid();
+  loopThunder();
+  // loopGrid();
+});
+function loopThunder(){
+  setTimeout(function(){
+    thunder();
+    loopThunder();
+  }, Math.round(Math.random() * 4000 ) + 7000);
+}
+function loopGrid(){
+  setTimeout(function () {
+    setGrid();
+    // console.log("Setting grid");
+    // loopGrid();
+    // randomColor(0,0);
+    // loopGrid();
+  }, 10);
+}
+function randomColor(x, y){
+  global.grid.setState(x,y,true);
+  // global.grid.setColorRGB(x,y,(Math.random() * 255),(Math.random() * 255), (Math.random() * 255));
+  global.grid.setColorRGB(x,y, 32, 32, 32);
+  global.grid.saveInstant(x,y,1);
+}
+function setGrid(){
+  console.log("SetGrid");
+  randomColor(2, 5);
+  randomColor(1, 5);
+  randomColor(0, 5);
+  randomColor(1, 4);
+  randomColor(0, 4);
+  randomColor(2, 3);
+  randomColor(1, 3);
+  randomColor(0, 3);
+  randomColor(2, 2);
+  randomColor(1, 2);
+  randomColor(0, 2);
+  randomColor(2, 1);
+  randomColor(1, 1);
+  randomColor(2, 4);
+  randomColor(0, 1);
+  randomColor(0, 0);
+  console.log("test");
+}
 
+function thunder(){
+  var x = Math.round(Math.random() * 2);
+  var y = Math.round(Math.random() * 4 ) +1;
+  // global.grid.setColorRGB(x,y,(),(Math.random() * 255), (Math.random() * 255));
+  //TODO: Get current state
+  //TODO: Set current state to yellow, full brightness
+  //TODO: Reset old state and reapply
+  var times = Math.round(Math.random() * 6);
+  for(var i = 0; i <= times; i++){
+    global.grid.setColorRGB(x,y, 255, 255, 0);
+    global.grid.setBrightness(x, y, 255);
+    global.grid.saveInstant(x, y);
+    setTimeout(function () {}, 300);
+    global.grid.setColorRGB(x, y, 32, 32, 32);
+    global.grid.setBrightness(x, y, 70);
+    global.grid.saveInstant(x, y);
+    setTimeout(function () {}, 400);
+  }
+}
 module.exports = app;
