@@ -6,6 +6,7 @@ function Light(posx, posy, hue_id) {
 
     this.hue_id = hue_id;
     this.on = false;
+    this.bri = 70;
     this.color = {
         r: 255,
         g: 255,
@@ -50,11 +51,15 @@ Light.prototype.setColorRGB = function(r, g, b) {
     this.color.b = b;
 };
 
+Light.prototype.setBrightness = function(bri){
+    this.bri = bri;
+};
+
 
 
 Light.prototype.saveInstant = function() {
     var xy = this.colorToXY(this.color.r, this.color.g, this.color.b);
-    var state = "{\"xy\":[" + xy[0] + ", " + xy[1] + "], \"transitiontime\":0}";
+    var state = "{\"xy\":[" + xy[0] + ", " + xy[1] + "], \"transitiontime\":1, \"bri\":"+this.bri+"}";
     console.log("API", "Submitting state to HUE api: " + state);
     request({
         method: 'PUT',
