@@ -23,6 +23,13 @@ router.post('/', function(req, res) {
         duration = Number(req.body.duration);
     }
 
+    if (param.x == undefined) {
+        res.status(400).json({error: 'No X coordinate supplied.'});
+    }
+    if (param.y == undefined) {
+        res.status(400).json({error: 'No Y coordinate supplied.'});
+    }
+
     // Change color
     if (param.color != undefined) {
         global.grid.setColorRGB(param.x, param.y, param.color.r, param.color.g, param.color.b);
