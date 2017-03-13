@@ -79,7 +79,7 @@ Grid.prototype.setBrightness = function(x, y, bri){
 }
 
 /**
- * Save the state of one light to the philips api
+ * Save the state of one light to the philips api.
  */
 Grid.prototype.saveInstant = function(x, y) {
     if (this.lights[y][x] === undefined) {
@@ -96,6 +96,23 @@ Grid.prototype.saveWithTransitionTime = function(x, y, time) {
         throw new Error("The light at position " + x + ", " + y + " does not exists");
     }
     this.lights[y][x].saveWithTransitionTime(time);
+};
+
+/**
+ * Get the height of the grid
+ */
+Grid.prototype.getHeight = function() {
+    return this.lights.length;
+};
+
+/**
+ * Get the width of the grid
+ */
+Grid.prototype.getWidth = function() {
+    if (this.lights.length > 0) {
+        return this.lights[0].length;
+    }
+    return 0;
 };
 
 Grid.prototype.getLight = function(x, y){
