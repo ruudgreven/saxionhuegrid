@@ -65,7 +65,7 @@ app.use(function(err, req, res, next) {
 app.listen(8080, function(){
   console.log("Start:\n" + "http://localhost/api/");
   setGrid();
-  loopThunder();
+  // loopThunder();
   // loopGrid();
 });
 function loopThunder(){
@@ -83,30 +83,33 @@ function loopGrid(){
     // loopGrid();
   }, 10);
 }
-function randomColor(x, y){
+function setLight(x, y, r, g, b, transitionTime){
   global.grid.setState(x,y,true);
   // global.grid.setColorRGB(x,y,(Math.random() * 255),(Math.random() * 255), (Math.random() * 255));
-  global.grid.setColorRGB(x,y, 32, 32, 32);
-  global.grid.saveInstant(x,y,1);
+  global.grid.setColorRGB(x,y, r, g, b);
+  global.grid.saveWithTransitionTime(x,y,transitionTime);
 }
+
+/*
+Function that sets the entire grid, back to front
+ */
 function setGrid(){
-  console.log("SetGrid");
-  randomColor(2, 5);
-  randomColor(1, 5);
-  randomColor(0, 5);
-  randomColor(1, 4);
-  randomColor(0, 4);
-  randomColor(2, 3);
-  randomColor(1, 3);
-  randomColor(0, 3);
-  randomColor(2, 2);
-  randomColor(1, 2);
-  randomColor(0, 2);
-  randomColor(2, 1);
-  randomColor(1, 1);
-  randomColor(2, 4);
-  randomColor(0, 1);
-  randomColor(0, 0);
+  setLight(2, 5, 255, 255, 0, 100);
+  setLight(1, 5, 255, 255, 0, 100);
+  setLight(0, 5, 255, 255, 0, 100);
+  setLight(1, 4, 255, 255, 0, 100);
+  setLight(0, 4, 255, 255, 0, 100);
+  setLight(2, 3, 255, 255, 0, 100);
+  setLight(1, 3, 255, 255, 0, 100);
+  setLight(0, 3, 255, 255, 0, 100);
+  setLight(2, 2, 255, 255, 0, 100);
+  setLight(1, 2, 255, 255, 0, 100);
+  setLight(0, 2, 255, 255, 0, 100);
+  setLight(2, 1, 255, 255, 0, 100);
+  setLight(1, 1, 255, 255, 0, 100);
+  setLight(2, 4, 255, 255, 0, 100);
+  setLight(0, 1, 255, 255, 0, 100);
+  setLight(0, 0, 255, 255, 0, 100);
   console.log("test");
 }
 
