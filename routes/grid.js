@@ -55,7 +55,7 @@ router.post('/', function(req, res) {
             }
 
             // Apply fade or change instant
-            if (duration > 0) {
+            if (param.duration > 0) {
                 global.grid.saveWithTransitionTime(x, y);
             } else {
                 global.grid.saveInstant(x, y);

@@ -76,7 +76,7 @@ Light.prototype.saveInstant = function() {
 
 Light.prototype.saveWithTransitionTime = function(time) {
     var xy = this.colorToXY(this.color.r, this.color.g, this.color.b);
-    var state = "{\"xy\":[" + xy[0] + ", " + xy[1] + "], \"transitiontime\": " + time * 10 + "}";
+    var state = "{\"xy\":[" + xy[0] + ", " + xy[1] + "], \"transitiontime\": " + time * 10 + ", \"bri\":"+this.bri+", \"on\":"+this.on+"}";
     console.log("API", "Submitting state to HUE api: " + state);
     request({
         method: 'PUT',
