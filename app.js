@@ -40,55 +40,36 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/users', users);
 app.use('/light', lights);
 app.use('/grid', grid);
-// app.use('/hueapi', hueapi); //NOT YET WORKING
 
 //Default route
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.end(res.locals.message);
+    res.send(res.locals.message);
 });
-app.listen(8080, function(){
-  console.log("Start:\n" + "http://localhost/api/");
-  setGrid();
-  // loopThunder();
-  // loopGrid();
+
+app.listen(3000, function () {
+    console.log('Robocodecup website listening on port 3000');
 });
-function loopThunder(){
-  setTimeout(function(){
-    thunder();
-    loopThunder();
-  }, Math.round(Math.random() * 4000 ) + 7000);
-}
-function loopGrid(){
-  setTimeout(function () {
-    setGrid();
-    // console.log("Setting grid");
-    // loopGrid();
-    // randomColor(0,0);
-    // loopGrid();
-  }, 10);
-}
-function setLight(x, y, r, g, b, transitionTime){
-  global.grid.setState(x,y,true);
-  // global.grid.setColorRGB(x,y,(Math.random() * 255),(Math.random() * 255), (Math.random() * 255));
-  global.grid.setColorRGB(x,y, r, g, b);
-  global.grid.saveWithTransitionTime(x,y,transitionTime);
-}
+
+
+
+
+
+
+
 
 /*
 Function that sets the entire grid, back to front
@@ -113,23 +94,4 @@ function setGrid(){
   console.log("test");
 }
 
-function thunder(){
-  var x = Math.round(Math.random() * 2);
-  var y = Math.round(Math.random() * 4 ) +1;
-  // global.grid.setColorRGB(x,y,(),(Math.random() * 255), (Math.random() * 255));
-  //TODO: Get current state
-  //TODO: Set current state to yellow, full brightness
-  //TODO: Reset old state and reapply
-  var times = Math.round(Math.random() * 6);
-  for(var i = 0; i <= times; i++){
-    global.grid.setColorRGB(x,y, 255, 255, 0);
-    global.grid.setBrightness(x, y, 255);
-    global.grid.saveInstant(x, y);
-    setTimeout(function () {}, 300);
-    global.grid.setColorRGB(x, y, 32, 32, 32);
-    global.grid.setBrightness(x, y, 70);
-    global.grid.saveInstant(x, y);
-    setTimeout(function () {}, 400);
-  }
-}
 module.exports = app;
