@@ -20,7 +20,7 @@ function Grid(hue_ids) {
         this.lights[y] = new Array();
         for (var x=0; x<hue_ids[y].length; x++) {
             if (hue_ids[y][x] != -1) {
-                this.lights[y][x] = new Light(x, y, hue_ids[y][x]);
+                this.lights[y][x] = new Light(y, x,  hue_ids[y][x]);
             } else {
                 this.lights[y][x] = undefined;
             }
@@ -64,6 +64,20 @@ Grid.prototype.setColorRGB = function(x, y, r, g, b) {
     this.lights[y][x].setColorRGB(r,g,b);
 };
 
+Grid.prototype.setBrightness = function(x, y, bri){
+    if (this.lights[y][x] === undefined) {
+        throw new Error("The light at position " + x + ", " + y + " does not exists");
+    }
+    if (typeof(bri) !== "number") {
+        throw new Error("Please give an integer value for bri");
+    }
+    if (bri < 0 || bri > 255) {
+        throw new Error("Please supply a number between 0 and 255 for bri");
+    }
+
+    this.lights[y][x].setBrightness(bri);
+}
+
 /**
  * Save the state of one light to the philips api.
  */
@@ -99,6 +113,10 @@ Grid.prototype.getWidth = function() {
         return this.lights[0].length;
     }
     return 0;
+};
+
+Grid.prototype.getLight = function(x, y){
+    return this.lights[y][x];
 };
 
 module.exports = Grid;
