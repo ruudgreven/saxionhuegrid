@@ -24,13 +24,21 @@ router.post('/', function(req, res) {
     }
 
     // Change color
-    global.grid.setColorRGB(param.x, param.y, param.r, param.g, param.b);
+    if (param.color != undefined) {
+        global.grid.setColorRGB(param.x, param.y, param.color.r, param.color.g, param.color.b);
+    }
+    if (param.bri != undefined) {
+        global.grid.setBrightness(param.x, param.y, param.bri);
+    }
+    if (param.on != undefined) {
+        global.grid.setState(param.x, param.y, param.on);
+    }
 
     // Apply fade or change instant
     if (duration > 0) {
-        global.grid.saveWithTransitionTime(param.x, param.y);
+        global.grid.getLight(param.x, param.y).saveWithTransitionTime(duration);
     } else {
-        global.grid.saveInstant(param.x, param.y);
+        global.grid.getLight(param.x, param.y).saveInstant();
     }
 
     res.status(200).json({succes: true});

@@ -61,37 +61,7 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(3000, function () {
-    console.log('Robocodecup website listening on port 3000');
+    console.log('Saxion hue grid listening on port 3000');
 });
-
-
-
-
-
-
-
-
-/*
-Function that sets the entire grid, back to front
- */
-function setGrid(){
-  setLight(2, 5, 255, 255, 0, 100);
-  setLight(1, 5, 255, 255, 0, 100);
-  setLight(0, 5, 255, 255, 0, 100);
-  setLight(1, 4, 255, 255, 0, 100);
-  setLight(0, 4, 255, 255, 0, 100);
-  setLight(2, 3, 255, 255, 0, 100);
-  setLight(1, 3, 255, 255, 0, 100);
-  setLight(0, 3, 255, 255, 0, 100);
-  setLight(2, 2, 255, 255, 0, 100);
-  setLight(1, 2, 255, 255, 0, 100);
-  setLight(0, 2, 255, 255, 0, 100);
-  setLight(2, 1, 255, 255, 0, 100);
-  setLight(1, 1, 255, 255, 0, 100);
-  setLight(2, 4, 255, 255, 0, 100);
-  setLight(0, 1, 255, 255, 0, 100);
-  setLight(0, 0, 255, 255, 0, 100);
-  console.log("test");
-}
 
 module.exports = app;

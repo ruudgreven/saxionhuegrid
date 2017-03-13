@@ -39,15 +39,20 @@ router.post('/', function(req, res) {
     // Change light in the grid and apply changes
     for (var y=0; y < global.grid.getHeight(); y++) {
         for (var x=0; x < global.grid.getWidth(); x++) {
-            console.log('Node ' + x + ', ' + y);
-            var curLight = global.grid[y][x];
-            console.log('Bla ' + x + ', ' + y);
-            if (curlight == undefined) {
+            var curLight = paramGrid[y][x];
+            if (curLight == undefined) {
                 throw 'Error light not found: ' + x + ', ' + y;
             }
             // Change color
-            global.grid.setColorRGB(x, y, curLight.color.r, curLight.color.g, curLight.color.b);
-            global.grid.setBrightness(x, y, bri);
+            if (curLight.color != undefined) {
+                global.grid.setColorRGB(x, y, curLight.color.r, curLight.color.g, curLight.color.b);
+            }
+            if (curLight.bri != undefined) {
+                global.grid.setBrightness(x, y, curLight.bri);
+            }
+            if (curLight.on != undefined) {
+                global.grid.setState(x, y, curLight.on);
+            }
 
             // Apply fade or change instant
             if (duration > 0) {
