@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //Routes
 app.use('/users', users);
-app.use('/lights', lights);
+app.use('/light', lights);
 app.use('/grid', grid);
 // app.use('/hueapi', hueapi); //NOT YET WORKING
 
