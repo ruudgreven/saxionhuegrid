@@ -3,21 +3,23 @@ var Light = require('./light');
 /**
  * The constructor of a Grid.
  * Give an array with Philips HUE id's of the light, -1 means that there is no light at that place
- * Example (OTSWO G4)
+ *
+ * Example (OTSWO G4):
  * var hue_ids = [
- * [1,  2,  3],
- * [4,  5,  6],
- * [7,  8,  9],
- * [10, 11, 12],
- * [13, 14, 15],
- * [16, -1, -1]
- * ];
+ * [16,  9,  6],
+ * [11, 12, 10],
+ * [4,   5, 13],
+ * [7,  14, 15],
+ * [3,   8,  2],
+ * [1,  -1, -1]
+ * ]
  */
 function Grid(hue_ids) {
-    this.lights = new Array();
+    this.lights = [];
 
+    // Create light objects for the lights in the grid
     for (var y=0; y<hue_ids.length; y++) {
-        this.lights[y] = new Array();
+        this.lights[y] = [];
         for (var x=0; x<hue_ids[y].length; x++) {
             if (hue_ids[y][x] != -1) {
                 this.lights[y][x] = new Light(y, x,  hue_ids[y][x]);
@@ -31,6 +33,9 @@ function Grid(hue_ids) {
 
 /**
  * Specify the state (boolean, true for on, false for off) for the light at position x, y.
+ * @param x position in the grid
+ * @param y position in the grid
+ * @param state true indicates light on, false indicate light off
  */
 Grid.prototype.setState = function(x, y, state) {
     if (this.lights[y][x] === undefined) {
@@ -40,18 +45,14 @@ Grid.prototype.setState = function(x, y, state) {
         throw new Error("Please give a boolean state");
     }
 
-    if (state == true) {
-        this.lights[y][x].turnOn();
-    } else {
-        this.lights[y][x].turnOff();
-    }
+    this.lights[y][x].setState(state);
 };
 
 /**
  * Specify the color (r,g,b from 0 to 255) for the light at position x, y.
  */
 Grid.prototype.setColorRGB = function(x, y, r, g, b) {
-    if (this.lights[y][x] === undefined) {
+    if (!this.lightExists(x, y)) {
         throw new Error("The light at position " + x + ", " + y + " does not exists");
     }
     if (typeof(r) !== "number" || typeof(g) !== "number" || typeof(b) !== "number") {
@@ -64,8 +65,14 @@ Grid.prototype.setColorRGB = function(x, y, r, g, b) {
     this.lights[y][x].setColorRGB(r,g,b);
 };
 
+/**
+ * Change brightness of the light
+ * @param x position in the grid
+ * @param y position in the grid
+ * @param bri Brightness (value between 0..255)
+ */
 Grid.prototype.setBrightness = function(x, y, bri){
-    if (this.lights[y][x] === undefined) {
+    if (!this.lightExists(x, y)) {
         throw new Error("The light at position " + x + ", " + y + " does not exists");
     }
     if (typeof(bri) !== "number") {
@@ -76,13 +83,13 @@ Grid.prototype.setBrightness = function(x, y, bri){
     }
 
     this.lights[y][x].setBrightness(bri);
-}
+};
 
 /**
  * Save the state of one light to the philips api.
  */
 Grid.prototype.saveInstant = function(x, y) {
-    if (this.lights[y][x] === undefined) {
+    if (!this.lightExists(x, y)) {
         throw new Error("The light at position " + x + ", " + y + " does not exists");
     }
     this.lights[y][x].saveInstant();
@@ -92,7 +99,7 @@ Grid.prototype.saveInstant = function(x, y) {
  * Save the state of one light to the philips api with a transition time in seconds (minimum steps 0.1)
  */
 Grid.prototype.saveWithTransitionTime = function(x, y, time) {
-    if (this.lights[y][x] === undefined) {
+    if (!this.lightExists(x, y)) {
         throw new Error("The light at position " + x + ", " + y + " does not exists");
     }
     this.lights[y][x].saveWithTransitionTime(time);
@@ -115,8 +122,27 @@ Grid.prototype.getWidth = function() {
     return 0;
 };
 
+/**
+ * Get a light from the grid
+ * @param x Position in the grid
+ * @param y Position in the grid
+ * @returns Light object
+ */
 Grid.prototype.getLight = function(x, y){
+    if (!this.lightExists(x, y)) {
+        throw new Error("The light at position " + x + ", " + y + " does not exists");
+    }
     return this.lights[y][x];
+};
+
+/**
+ * Check if a certain grid position exists and contains a light
+ * @param x X position in the grid
+ * @param y Y position in the grid
+ * @returns {boolean} True, if the grid contains a light
+ */
+Grid.prototype.lightExists = function (x, y) {
+    return y >= 0 && y < this.lights.length && x >=0 && x < this.lights[y].length && this.lights[y][x] != undefined;
 };
 
 module.exports = Grid;

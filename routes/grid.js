@@ -30,16 +30,11 @@ router.post('/', function(req, res) {
     }
     var paramGrid = req.body.grid;
 
-    // Get duration from body
-    var duration = 0;
-    if (req.body.duration) {
-        duration = Number(req.body.duration);
-    }
-
     // Change light in the grid and apply changes
     for (var y=0; y < global.grid.getHeight(); y++) {
         for (var x=0; x < global.grid.getWidth(); x++) {
             var curLight = paramGrid[y][x];
+
             if (curLight == undefined) {
                 throw 'Error light not found: ' + x + ', ' + y;
             }
@@ -47,19 +42,24 @@ router.post('/', function(req, res) {
             if (curLight.color != undefined) {
                 global.grid.setColorRGB(x, y, curLight.color.r, curLight.color.g, curLight.color.b);
             }
+
             if (curLight.bri != undefined) {
                 global.grid.setBrightness(x, y, curLight.bri);
             }
+
             if (curLight.on != undefined) {
                 global.grid.setState(x, y, curLight.on);
             }
 
             // Apply fade or change instant
-            if (param.duration > 0) {
-                global.grid.saveWithTransitionTime(x, y);
+            if (curLight.duration > 0) {
+                global.grid.saveWithTransitionTime(x, y, curLight.duration);
+
             } else {
                 global.grid.saveInstant(x, y);
             }
+
+
         }
     }
 

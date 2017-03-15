@@ -9,28 +9,28 @@ router.get('/', function(req, res, next) {
 /**
  * Change a single light
  */
-// TODO: error handling
 router.post('/', function(req, res) {
-    // if (!req.body.grid) {
-    //     res.status(400).json({error: 'No grid provided as parameters in body.'});
-    // }
-
     var param = req.body;
 
-    // Get duration from body
-    var duration = 0;
-    if (req.body.duration) {
-        duration = Number(req.body.duration);
-    }
-
+    // Validate parameters
     if (param.x == undefined) {
         res.status(400).json({error: 'No X coordinate supplied.'});
     }
     if (param.y == undefined) {
         res.status(400).json({error: 'No Y coordinate supplied.'});
     }
+    if (!global.grid.lightExists(param.x, param.y)) {
+        res.status(400).json({error: 'Position (x: ' + x + ", y: " + y + ") is an invalid grid position (or does not contain a light)."});
+    }
+
+    // Get duration from body (without duration, use 0 -> instant)
+    var duration = 0;
+    if (req.body.duration) {
+        duration = Number(req.body.duration);
+    }
 
     // Change color
+    // TODO: error handling
     if (param.color != undefined) {
         global.grid.setColorRGB(param.x, param.y, param.color.r, param.color.g, param.color.b);
     }
