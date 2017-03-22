@@ -19,6 +19,12 @@ function Light(posX, posY, hueId) {
         b: 255
     };
 
+    // Variables for keeping track if there are changes (only if there are changes, these values are sent to the light: this speeds up the process)
+    this.stateChanged = false;
+    this.briChanged = false;
+    this.colorChanged = false;
+
+
     /**
      * Converts RGB color to XY spectrum
      * @param red byte representing amount of red (0..255)
@@ -59,7 +65,11 @@ Light.prototype.setState = function(state) {
         throw new Error("Please give a boolean state");
     }
 
-    this.on = state;
+    // Only send new state to bridge when state changes
+    if (this.on != state) {
+        this.stateChanged = true;
+        this.on = state;
+    }
 };
 
 /**
@@ -69,9 +79,12 @@ Light.prototype.setState = function(state) {
  * @param b Amount of blue (byte)
  */
 Light.prototype.setColorRGB = function(r, g, b) {
-    this.color.r = r;
-    this.color.g = g;
-    this.color.b = b;
+    if (r != this.color.r || g != this.color.g || b != this.color.b) {
+        this.colorChanged = true;
+        this.color.r = r;
+        this.color.g = g;
+        this.color.b = b;
+    }
 };
 
 /**
@@ -79,27 +92,19 @@ Light.prototype.setColorRGB = function(r, g, b) {
  * @param bri Brightness (value between 0 and 255)
  */
 Light.prototype.setBrightness = function(bri){
-    this.bri = bri;
+    if (this.bri != bri) {
+        this.briChanged = true;
+        this.bri = bri;
+    }
 };
 
 /**
  * Save instant directly updates the light (without fade)
  */
 Light.prototype.saveInstant = function() {
-    var xy = this.colorToXY(this.color.r, this.color.g, this.color.b);
-    var state = "{\"xy\":[" + xy[0] + ", " + xy[1] + "], \"transitiontime\":1, \"bri\":"+this.bri+", \"on\":"+this.on+"}";
-    console.log("API", "Submitting state to HUE api: " + state);
-    request({
-        method: 'PUT',
-        uri: 'http://' + global.hue.ip + '/api/' + global.hue.user + '/lights/' + this.hue_id + '/state',
-        body: state
-    }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body)
-        } else {
-            throw error;
-        }
-    });
+    // Save without transition time
+    this.saveWithTransitionTime(0);
+
 };
 
 /**
@@ -107,18 +112,41 @@ Light.prototype.saveInstant = function() {
  * @param time amount of seconds for the fade
  */
 Light.prototype.saveWithTransitionTime = function(time) {
-    var xy = this.colorToXY(this.color.r, this.color.g, this.color.b);
-    var state = "{\"xy\":[" + xy[0] + ", " + xy[1] + "], \"transitiontime\": " + time * 10 + ", \"bri\":"+this.bri+", \"on\":"+this.on+"}";
+    // If there are no changes, do not update the light
+    if (!this.colorChanged && !this.briChanged && !this.stateChanged) {
+        return;
+    }
+
+    // Build new state
+    var state = "{\"transitiontime\": " + time * 10;
+
+    if (this.colorChanged) {
+        var xy = this.colorToXY(this.color.r, this.color.g, this.color.b);
+        state += ", \"xy\":[" + xy[0] + ", " + xy[1] + "]";
+    }
+    if (this.briChanged) {
+        state += ", \"bri\":" + this.bri;
+    }
+    if (this.stateChanged) {
+        state += ", \"on\":" + this.on;
+    }
+    state += "}";
+
     console.log("API", "Submitting state to HUE api: " + state);
     request({
         method: 'PUT',
         uri: 'http://' + global.hue.ip + '/api/' + global.hue.user + '/lights/' + this.hue_id + '/state',
         body: state
     }, function (error, response, body) {
+        // Reset changed variables
+        this.briChanged = false;
+        this.stateChanged = false;
+        this.colorChanged = false;
+
         if (!error && response.statusCode == 200) {
             console.log(body)
         } else {
-            throw error;
+            //throw error;
         }
     });
 };

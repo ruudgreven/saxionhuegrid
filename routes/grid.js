@@ -58,8 +58,6 @@ router.post('/', function(req, res) {
             } else {
                 global.grid.saveInstant(x, y);
             }
-
-
         }
     }
 

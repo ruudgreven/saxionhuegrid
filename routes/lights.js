@@ -51,4 +51,18 @@ router.post('/', function(req, res) {
     res.status(200).json({succes: true});
 });
 
+/**
+ * Change all lights in a certain row
+ */
+router.post('/row', function(req, res) {
+    res.status(400).json({error: 'Not implemented yet...'});
+});
+
+/**
+ * Change all lights in a certain column
+ */
+router.post('/column', function(req, res) {
+    res.status(400).json({error: 'Not implemented yet...'});
+});
+
 module.exports = router;
